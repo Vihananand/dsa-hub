@@ -5,10 +5,10 @@ A modern, full-stack web application for Data Structures and Algorithms practice
 ## 🌟 Features
 
 ### 🎯 Question Management
-- **Comprehensive Question Library**: Browse through curated coding challenges with detailed information
-- **Smart Filtering & Search**: Filter questions by topic, difficulty level, and search by title
-- **Difficulty Statistics**: Real-time stats showing Easy, Medium, Hard, and total question counts
-- **Dynamic Loading**: Enhanced loading screens with progress indicators and animated transitions
+- **Comprehensive Question Library**: Browse through curated coding challenges with detailed information.
+- **Smart Filtering & Search**: Filter questions by topic, difficulty level, and search by title.
+- **Difficulty Statistics**: Real-time stats showing Easy, Medium, Hard, and total question counts.
+- **Dynamic Loading**: Enhanced loading screens with progress indicators and animated transitions.
 
 ### 📊 Progress Tracking
 - **Local Storage Progress**: Track completed and revised questions (browser-based storage)

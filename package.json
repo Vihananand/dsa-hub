@@ -1,0 +1,36 @@
+{
+  "name": "dsa-hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "setup-db": "node setup-db.js",
+    "debug-db": "node debug-db.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.3.1",
+    "framer-motion": "^11.0.17",
+    "gsap": "^3.13.0",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "next": "15.4.1",
+    "pg": "^8.11.3",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1",
+    "@types/node": "24.0.15",
+    "@types/react": "19.1.8",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.1",
+    "tailwindcss": "^4.1"
+  }
+}

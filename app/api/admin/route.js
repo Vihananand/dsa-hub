@@ -12,7 +12,6 @@ export async function POST(request) {
 
     // Validate input
     if (!username || !password) {
-      console.log("[LOGIN] Missing credentials");
       return AuthService.createErrorResponse("Username and password are required", 400);
     }
 
@@ -24,23 +23,17 @@ export async function POST(request) {
       return AuthService.createErrorResponse("Credentials too long", 400);
     }
 
-    console.log(`[LOGIN] Attempting login for username: ${username}`);
-
     // Find admin user
     const admin = await AdminService.findByUsername(username);
     if (!admin) {
-      console.log(`[LOGIN] User not found: ${username}`);
       // Use same response time to prevent username enumeration
       await bcrypt.compare(password, "$2b$10$dummy.hash.to.prevent.timing.attacks");
       return AuthService.createErrorResponse("Invalid credentials", 401);
     }
 
-    console.log(`[LOGIN] User found, verifying password for: ${username}`);
-
     // Verify password
     const isValidPassword = await bcrypt.compare(password, admin.password);
     if (!isValidPassword) {
-      console.log(`[LOGIN] Invalid password for username: ${username}`);
       return AuthService.createErrorResponse("Invalid credentials", 401);
     }
 
@@ -52,7 +45,6 @@ export async function POST(request) {
     };
 
     const token = AuthService.generateToken(tokenPayload, "24h");
-    console.log(`[LOGIN] Login successful for username: ${username}, token generated`);
 
     // Return success response with cookie
     return AuthService.createAuthResponse({

@@ -35,8 +35,6 @@ export const POST = withAuth(async function(request, { auth }) {
     // Create admin user
     const newAdmin = await AdminService.create(username, hashedPassword);
     
-    console.log(`[ADMIN USERS] New admin created: ${username} by ${auth.username}`);
-
     return new Response(JSON.stringify({
       success: true,
       message: "Admin user created successfully",
@@ -65,8 +63,6 @@ export const GET = withAuth(async function(request, { auth }) {
     const { rows } = await pool.query(
       "SELECT id, username, created_at FROM admin ORDER BY created_at DESC"
     );
-
-    console.log(`[ADMIN USERS] Listed ${rows.length} admin users by ${auth.username}`);
 
     return new Response(JSON.stringify({
       success: true,
@@ -105,8 +101,6 @@ export const DELETE = withAuth(async function(request, { auth }) {
     if (!deletedAdmin) {
       return AuthService.createErrorResponse("Admin user not found", 404);
     }
-
-    console.log(`[ADMIN USERS] Admin deleted: ${deletedAdmin.username} by ${auth.username}`);
 
     return new Response(JSON.stringify({
       success: true,

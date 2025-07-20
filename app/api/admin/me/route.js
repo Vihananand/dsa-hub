@@ -7,16 +7,12 @@ import { AuthService, AdminService } from "../../auth.js";
  */
 export async function GET(request) {
   try {
-    console.log("[AUTH CHECK] Checking authentication...");
-    
     // Authenticate request
     const auth = await AuthService.authenticate(request);
-    console.log(`[AUTH CHECK] Authentication successful for user: ${auth.username}`);
 
     // Get fresh profile data
     const profile = await AdminService.getProfile(auth.id);
     if (!profile) {
-      console.log(`[AUTH CHECK] Profile not found for user ID: ${auth.id}`);
       return AuthService.createErrorResponse("User profile not found", 404);
     }
 
@@ -33,7 +29,6 @@ export async function GET(request) {
     });
 
   } catch (error) {
-    console.log(`[AUTH CHECK] Authentication failed: ${error.message}`);
     return AuthService.createErrorResponse(error.message, 401);
   }
 }
@@ -74,8 +69,6 @@ export async function PATCH(request) {
     // Update password
     await AdminService.updatePassword(auth.id, hashedNewPassword);
     
-    console.log(`[PROFILE UPDATE] Password updated for user: ${auth.username}`);
-
     return new Response(JSON.stringify({
       success: true,
       message: "Password updated successfully"

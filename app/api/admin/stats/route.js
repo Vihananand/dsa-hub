@@ -7,8 +7,6 @@ import { withAuth, AuthService } from "../../auth.js";
  */
 export const GET = withAuth(async function(request, { auth }) {
   try {
-    console.log(`[ADMIN STATS] Fetching dashboard stats for ${auth.username}`);
-
     // Get question statistics
     const questionStats = await pool.query(`
       SELECT 

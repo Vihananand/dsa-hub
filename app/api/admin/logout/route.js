@@ -14,8 +14,6 @@ export async function POST(request) {
     } catch (error) {
       // Ignore auth errors for logout - we'll clear the cookie anyway
     }
-
-    console.log(`[LOGOUT] User ${username} logging out`);
     
     // Always return success and clear cookie
     return AuthService.createLogoutResponse();

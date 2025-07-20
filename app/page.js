@@ -3,12 +3,10 @@ import { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { QuestionCard } from "../components/card";
-import { BuyMeCoffeeModal } from "../components/BuyMeCoffeeModal";
 
 export default function Home() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showCoffeeModal, setShowCoffeeModal] = useState(false);
   const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 500], [0, 150]);
 
@@ -41,31 +39,30 @@ export default function Home() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
         {/* Hero Section */}
-        <div className="flex min-h-screen flex-col items-center justify-center text-center">
+        <div className="flex min-h-[85vh] sm:min-h-[80vh] lg:min-h-screen flex-col items-center justify-center text-center py-8 sm:py-16">
           <motion.div
             initial={{ opacity: 0, y: -50, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 1, type: "spring", bounce: 0.3 }}
-            className="mb-8"
+            className="mb-8 sm:mb-8"
           >
-            {/* Logo/Icon */}
             <motion.div
               whileHover={{ rotate: 360, scale: 1.1 }}
               transition={{ duration: 0.8 }}
-              className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-white/10 to-white/5 glow-border shadow-2xl"
+              className="mx-auto mb-8 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-white/10 to-white/5 glow-border shadow-2xl"
             >
-              <span className="text-4xl">⚡</span>
+              <span className="text-2xl sm:text-4xl">⚡</span>
             </motion.div>
 
-            <h1 className="mb-6 text-6xl font-black tracking-tight text-gradient md:text-8xl lg:text-9xl">
+            <h1 className="mb-6 text-4xl font-black tracking-tight text-gradient sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
               DSA Hub
             </h1>
             
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: "6rem" }}
+              animate={{ width: "4rem" }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="mx-auto mb-8 h-1 rounded-full bg-gradient-to-r from-gray-400 via-white to-gray-400"
+              className="mx-auto mb-8 h-1 rounded-full bg-gradient-to-r from-gray-400 via-white to-gray-400 sm:w-24"
             />
           </motion.div>
 
@@ -73,12 +70,12 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="mb-12 max-w-4xl"
+            className="mb-10 max-w-4xl px-4"
           >
-            <p className="text-xl font-medium leading-relaxed text-gray-300 md:text-2xl">
+            <p className="text-base font-medium leading-relaxed text-gray-300 sm:text-lg md:text-xl lg:text-2xl">
               Your modern, secure, and efficient platform to explore, manage, and solve curated questions.
             </p>
-            <p className="mt-4 text-lg font-semibold text-white md:text-xl">
+            <p className="mt-4 text-sm font-semibold text-white sm:text-base md:text-lg lg:text-xl">
               Built for speed, security, and style.
             </p>
           </motion.div>
@@ -88,60 +85,33 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="mb-16 flex flex-col items-center gap-6 sm:flex-row"
+            className="mb-12 flex flex-col items-center gap-5 px-4 sm:flex-row sm:gap-6"
           >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-64">
               <button className="w-full group relative overflow-hidden rounded-full bg-gradient-to-r from-white/20 via-gray-300/20 to-white/20 p-1 shadow-2xl hover:shadow-white/20 transition-all duration-300 cursor-pointer">
                 <Link
                   href="/questions"
-                  className="relative flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-gray-900 to-black px-16 py-5 text-white transition-all duration-300 group-hover:from-gray-800 group-hover:to-gray-900 w-96 cursor-pointer"
+                  className="relative flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gray-900 to-black px-6 py-3 text-white transition-all duration-300 group-hover:from-gray-800 group-hover:to-gray-900 sm:px-8 sm:py-4 cursor-pointer min-w-0 w-full"
                 >
-                  <span className="text-2xl">🚀</span>
-                  <span className="text-lg font-bold">Explore Questions</span>
+                  <span className="text-xl sm:text-2xl">🚀</span>
+                  <span className="text-sm font-bold sm:text-base lg:text-lg whitespace-nowrap">Explore Questions</span>
                   <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/10 to-gray-300/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Link>
               </button>
             </motion.div>
 
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-64">
               <button className="w-full group relative overflow-hidden rounded-full bg-gradient-to-r from-gray-400/20 via-gray-500/20 to-gray-300/20 p-1 shadow-2xl hover:shadow-gray-400/20 transition-all duration-300 cursor-pointer">
                 <Link
                   href="/progress"
-                  className="relative flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-gray-900 to-black px-16 py-5 text-white transition-all duration-300 group-hover:from-gray-800 group-hover:to-gray-900 w-96 cursor-pointer"
+                  className="relative flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gray-900 to-black px-6 py-3 text-white transition-all duration-300 group-hover:from-gray-800 group-hover:to-gray-900 sm:px-8 sm:py-4 cursor-pointer min-w-0 w-full"
                 >
-                  <span className="text-2xl">📊</span>
-                  <span className="text-lg font-bold">Track Progress</span>
+                  <span className="text-xl sm:text-2xl">📊</span>
+                  <span className="text-sm font-bold sm:text-base lg:text-lg whitespace-nowrap">Track Progress</span>
                   <div className="absolute inset-0 rounded-full bg-gradient-to-r from-gray-400/10 to-gray-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Link>
               </button>
             </motion.div>
-          </motion.div>
-
-          {/* Buy Me a Coffee Button */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.9, duration: 0.6 }}
-            className="mb-16 flex justify-center"
-          >
-            <motion.button
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowCoffeeModal(true)}
-              className="group relative overflow-hidden rounded-full bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20 p-1 shadow-2xl hover:shadow-yellow-500/20 transition-all duration-300 hover:cursor-pointer"
-            >
-              <div className="relative flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-gray-900 to-black px-8 py-4 text-white transition-all duration-300 group-hover:from-yellow-900/20 group-hover:to-orange-900/20">
-                <motion.span 
-                  className="text-2xl"
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  ☕
-                </motion.span>
-                <span className="text-base font-bold">Buy Me a Coffee</span>
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-            </motion.button>
           </motion.div>
         </div>
 
@@ -150,14 +120,14 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.8 }}
-          className="pb-20"
+          className="pb-16 sm:pb-20"
         >
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 sm:mb-12 px-4">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.6 }}
-              className="text-4xl font-bold text-gradient mb-4 md:text-5xl"
+              className="text-2xl font-bold text-gradient mb-3 sm:text-3xl md:text-4xl lg:text-5xl"
             >
               Latest Questions
             </motion.h2>
@@ -165,17 +135,41 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.6 }}
-              className="text-lg text-gray-400"
+              className="text-base text-gray-400 sm:text-lg"
             >
               Fresh challenges to sharpen your skills
             </motion.p>
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center py-16">
-              <div className="mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-gray-500" />
-              <p className="text-lg text-gray-400">Loading amazing questions...</p>
-            </div>
+            <motion.div 
+              className="flex flex-col items-center py-16"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.div 
+                className="mb-4 text-6xl"
+                animate={{ 
+                  y: [0, -10, 0],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ 
+                  duration: 1.5, 
+                  repeat: Infinity, 
+                  ease: "easeInOut" 
+                }}
+              >
+                🚀
+              </motion.div>
+              <motion.p 
+                className="text-lg text-gray-400"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                Loading amazing questions...
+              </motion.p>
+            </motion.div>
           ) : questions.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -186,7 +180,7 @@ export default function Home() {
               <p className="text-lg text-gray-400">No questions found. Check back soon for fresh challenges!</p>
             </motion.div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-2 px-4">
               {questions.map((question, index) => (
                 <QuestionCard
                   key={question.serial}
@@ -250,12 +244,6 @@ export default function Home() {
           </svg>
         </motion.div>
       </div>
-
-      {/* Buy Me a Coffee Modal */}
-      <BuyMeCoffeeModal 
-        isOpen={showCoffeeModal} 
-        onClose={() => setShowCoffeeModal(false)} 
-      />
     </main>
   );
 }

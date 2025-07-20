@@ -10,48 +10,34 @@ export default function QuestionsPage() {
   const [filter, setFilter] = useState({ topic: "", difficulty: "" });
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingStage, setLoadingStage] = useState('initializing'); // initializing, fetching, processing, complete
+  const [error, setError] = useState(false);
 
   const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 500], [0, 150]);
 
-  // Fetch all questions initially with enhanced loading states
+  // Fetch all questions with simplified loading
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        // Stage 1: Initializing
-        setLoadingStage('initializing');
-        setLoadingProgress(10);
-        
-        await new Promise(resolve => setTimeout(resolve, 300)); // Brief delay for UX
-        
-        // Stage 2: Fetching
-        setLoadingStage('fetching');
-        setLoadingProgress(30);
+        setLoading(true);
+        setLoadingProgress(0);
         
         const res = await fetch("/api/questions");
-        setLoadingProgress(60);
+        setLoadingProgress(50);
         
         const data = await res.json();
-        setLoadingProgress(80);
-        
-        // Stage 3: Processing
-        setLoadingStage('processing');
-        await new Promise(resolve => setTimeout(resolve, 200)); // Brief processing delay
-        
         setAllQuestions(data);
         setLoadingProgress(100);
         
-        // Stage 4: Complete
-        setLoadingStage('complete');
-        
-        // Small delay before removing loading state
-        await new Promise(resolve => setTimeout(resolve, 400));
+        // Ensure animation lasts at least 1 second for better UX
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setLoading(false);
         
       } catch (error) {
         console.error('Failed to fetch questions:', error);
-        setLoadingStage('error');
+        setError(true);
+        // Still wait for 1 second on error for consistent timing
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setLoading(false);
       }
     };
@@ -117,50 +103,17 @@ export default function QuestionsPage() {
 
   const stats = difficultyStats();
 
-  // Enhanced Loading Component
+  // Simple Loading Component
   const LoadingScreen = () => {
-    const getStageMessage = () => {
-      switch (loadingStage) {
-        case 'initializing':
-          return {
-            title: "Initializing DSA Hub",
-            subtitle: "Preparing your coding journey...",
-            icon: "⚡"
-          };
-        case 'fetching':
-          return {
-            title: "Fetching Questions",
-            subtitle: "Loading challenges from our database...",
-            icon: "📡"
-          };
-        case 'processing':
-          return {
-            title: "Processing Data",
-            subtitle: "Organizing questions by difficulty...",
-            icon: "⚙️"
-          };
-        case 'complete':
-          return {
-            title: "Ready to Code!",
-            subtitle: "Welcome to your coding adventure",
-            icon: "🚀"
-          };
-        case 'error':
-          return {
-            title: "Connection Error",
-            subtitle: "Please check your internet connection",
-            icon: "⚠️"
-          };
-        default:
-          return {
-            title: "Loading...",
-            subtitle: "Please wait",
-            icon: "⏳"
-          };
-      }
+    const stageInfo = error ? {
+      title: "Connection Error",
+      subtitle: "Please check your internet connection",
+      icon: "⚠️"
+    } : {
+      title: "Ready to Code!",
+      subtitle: "Loading amazing questions...",
+      icon: "🚀"
     };
-
-    const stageInfo = getStageMessage();
 
     return (
       <motion.div
@@ -199,7 +152,6 @@ export default function QuestionsPage() {
         <div className="relative z-10 text-center max-w-md mx-auto px-6">
           {/* Animated icon */}
           <motion.div
-            key={loadingStage}
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ duration: 0.6, type: "spring", bounce: 0.4 }}
@@ -210,7 +162,6 @@ export default function QuestionsPage() {
 
           {/* Title */}
           <motion.h1
-            key={`title-${loadingStage}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -221,7 +172,6 @@ export default function QuestionsPage() {
 
           {/* Subtitle */}
           <motion.p
-            key={`subtitle-${loadingStage}`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -231,11 +181,11 @@ export default function QuestionsPage() {
           </motion.p>
 
           {/* Enhanced Progress Bar */}
-          <div className="relative mb-8">
+          <div className="relative mb-8 w-full max-w-sm mx-auto">
             <div className="glass glow-border rounded-full p-2">
-              <div className="w-80 h-3 bg-gray-800/50 rounded-full overflow-hidden">
+              <div className="w-full h-3 bg-gray-800/50 rounded-full overflow-hidden">
                 <motion.div
-                  initial={{ width: 0 }}
+                  initial={{ width: "0%" }}
                   animate={{ width: `${loadingProgress}%` }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                   className="h-full bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 rounded-full relative"
@@ -363,35 +313,35 @@ export default function QuestionsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="mt-8 flex flex-wrap justify-center gap-4"
+              className="mt-8 flex flex-wrap justify-center gap-2 sm:gap-4"
             >
               <motion.div 
                 whileHover={{ scale: 1.05, y: -2 }}
-                className="glass-dark glow-border rounded-2xl px-6 py-4 min-w-[120px]"
+                className="glass-dark glow-border rounded-2xl px-3 py-3 sm:px-6 sm:py-4 min-w-[90px] sm:min-w-[120px]"
               >
-                <div className="text-2xl font-bold text-emerald-400">{stats.easy}</div>
-                <div className="text-sm font-medium uppercase tracking-wide text-emerald-300/80">Easy</div>
+                <div className="text-xl sm:text-2xl font-bold text-emerald-400">{stats.easy}</div>
+                <div className="text-xs sm:text-sm font-medium uppercase tracking-wide text-emerald-300/80">Easy</div>
               </motion.div>
               <motion.div 
                 whileHover={{ scale: 1.05, y: -2 }}
-                className="glass-dark glow-border rounded-2xl px-6 py-4 min-w-[120px]"
+                className="glass-dark glow-border rounded-2xl px-3 py-3 sm:px-6 sm:py-4 min-w-[90px] sm:min-w-[120px]"
               >
-                <div className="text-2xl font-bold text-amber-400">{stats.medium}</div>
-                <div className="text-sm font-medium uppercase tracking-wide text-amber-300/80">Medium</div>
+                <div className="text-xl sm:text-2xl font-bold text-amber-400">{stats.medium}</div>
+                <div className="text-xs sm:text-sm font-medium uppercase tracking-wide text-amber-300/80">Medium</div>
               </motion.div>
               <motion.div 
                 whileHover={{ scale: 1.05, y: -2 }}
-                className="glass-dark glow-border rounded-2xl px-6 py-4 min-w-[120px]"
+                className="glass-dark glow-border rounded-2xl px-3 py-3 sm:px-6 sm:py-4 min-w-[90px] sm:min-w-[120px]"
               >
-                <div className="text-2xl font-bold text-red-400">{stats.hard}</div>
-                <div className="text-sm font-medium uppercase tracking-wide text-red-300/80">Hard</div>
+                <div className="text-xl sm:text-2xl font-bold text-red-400">{stats.hard}</div>
+                <div className="text-xs sm:text-sm font-medium uppercase tracking-wide text-red-300/80">Hard</div>
               </motion.div>
               <motion.div 
                 whileHover={{ scale: 1.05, y: -2 }}
-                className="glass-dark glow-border rounded-2xl px-6 py-4 min-w-[120px]"
+                className="glass-dark glow-border rounded-2xl px-3 py-3 sm:px-6 sm:py-4 min-w-[90px] sm:min-w-[120px]"
               >
-                <div className="text-2xl font-bold text-gray-300">{stats.total}</div>
-                <div className="text-sm font-medium uppercase tracking-wide text-gray-400/80">Total</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-300">{stats.total}</div>
+                <div className="text-xs sm:text-sm font-medium uppercase tracking-wide text-gray-400/80">Total</div>
               </motion.div>
             </motion.div>
           )}
@@ -435,23 +385,23 @@ export default function QuestionsPage() {
                   className="flex-1 w-full"
                 />
                 
-                <div className="flex gap-4 w-full lg:flex-1 lg:max-w-md relative z-20">
+                <div className="flex gap-3 w-full lg:flex-1 lg:max-w-lg relative z-20">
                   <Dropdown
                     options={topicOptions}
                     value={filter.topic}
                     onChange={(value) => setFilter(f => ({ ...f, topic: value }))}
-                    placeholder="All Topics"
+                    placeholder="Topics"
                     icon="🏷️"
-                    className="flex-1"
+                    className="flex-1 min-w-0"
                   />
                   
                   <Dropdown
                     options={difficultyOptions}
                     value={filter.difficulty}
                     onChange={(value) => setFilter(f => ({ ...f, difficulty: value }))}
-                    placeholder="All Difficulties"
+                    placeholder="Difficulty"
                     icon="⚡"
-                    className="flex-1"
+                    className="flex-1 min-w-0"
                   />
                 </div>
               </div>

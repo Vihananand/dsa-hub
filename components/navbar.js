@@ -40,14 +40,14 @@ export default function Navbar() {
 
   const lineVariants = {
     closed: { 
-      top: { rotate: 0, y: 0 },
-      middle: { opacity: 1 },
-      bottom: { rotate: 0, y: 0 }
+      top: { rotate: 0, y: 0, transformOrigin: 'center' },
+      middle: { opacity: 1, scale: 1 },
+      bottom: { rotate: 0, y: 0, transformOrigin: 'center' }
     },
     open: {
-      top: { rotate: 45, y: 6 },
-      middle: { opacity: 0 },
-      bottom: { rotate: -45, y: -6 }
+      top: { rotate: 45, y: 4, transformOrigin: 'center' },
+      middle: { opacity: 0, scale: 0 },
+      bottom: { rotate: -45, y: -4, transformOrigin: 'center' }
     }
   };
 
@@ -88,31 +88,28 @@ export default function Navbar() {
           {/* Mobile Hamburger Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden relative h-6 w-6 focus:outline-none cursor-pointer"
+            className="md:hidden relative h-6 w-6 focus:outline-none cursor-pointer flex flex-col justify-center items-center"
             aria-label="Toggle menu"
           >
             <motion.div
-              variants={hamburgerVariants}
-              animate={isOpen ? "open" : "closed"}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0"
+              className="relative w-6 h-6 flex flex-col justify-center items-center"
             >
               <motion.span
                 variants={lineVariants.closed}
                 animate={isOpen ? lineVariants.open.top : lineVariants.closed.top}
-                className="absolute h-0.5 w-6 bg-white transform origin-center"
-                style={{ top: '6px' }}
+                className="absolute h-0.5 w-6 bg-white rounded-full"
+                style={{ top: '8px' }}
               />
               <motion.span
                 variants={lineVariants.closed}
                 animate={isOpen ? lineVariants.open.middle : lineVariants.closed.middle}
-                className="absolute h-0.5 w-6 bg-white transform origin-center"
-                style={{ top: '11px' }}
+                className="absolute h-0.5 w-6 bg-white rounded-full"
+                style={{ top: '12px' }}
               />
               <motion.span
                 variants={lineVariants.closed}
                 animate={isOpen ? lineVariants.open.bottom : lineVariants.closed.bottom}
-                className="absolute h-0.5 w-6 bg-white transform origin-center"
+                className="absolute h-0.5 w-6 bg-white rounded-full"
                 style={{ top: '16px' }}
               />
             </motion.div>

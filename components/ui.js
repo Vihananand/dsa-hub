@@ -24,18 +24,18 @@ export function Dropdown({ options, value, onChange, placeholder, icon, classNam
         whileTap={{ scale: 0.98 }}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="glass glow-border w-full rounded-xl px-4 py-3 text-left flex items-center justify-between text-white font-medium focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 cursor-pointer"
+        className="glass glow-border w-full rounded-xl px-3 py-2.5 text-left flex items-center justify-between text-white font-medium focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 cursor-pointer min-h-[48px]"
       >
-        <div className="flex items-center gap-3">
-          {icon && <span className="text-lg">{icon}</span>}
-          <span className={value ? "text-white" : "text-gray-400"}>
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          {icon && <span className="text-base flex-shrink-0">{icon}</span>}
+          <span className={`${value ? "text-white" : "text-gray-400"} truncate text-sm`}>
             {displayValue}
           </span>
         </div>
         <motion.svg
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="h-5 w-5 text-gray-400"
+          className="h-4 w-4 text-gray-400 flex-shrink-0 ml-2"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

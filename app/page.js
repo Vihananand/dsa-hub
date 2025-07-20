@@ -138,7 +138,7 @@ export default function Home() {
                 >
                   ☕
                 </motion.span>
-                <span className="text-base font-bold">Buy Me a Coffee</span>
+                <span className="text-base font-bold hover:cursor-pointer">Buy Me a Coffee</span>
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             </motion.button>

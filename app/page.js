@@ -128,7 +128,7 @@ export default function Home() {
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowCoffeeModal(true)}
-              className="group relative overflow-hidden rounded-full bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20 p-1 shadow-2xl hover:shadow-yellow-500/20 transition-all duration-300"
+              className="group relative overflow-hidden rounded-full bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20 p-1 shadow-2xl hover:shadow-yellow-500/20 transition-all duration-300 hover:cursor-pointer"
             >
               <div className="relative flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-gray-900 to-black px-8 py-4 text-white transition-all duration-300 group-hover:from-yellow-900/20 group-hover:to-orange-900/20">
                 <motion.span 
@@ -138,7 +138,7 @@ export default function Home() {
                 >
                   ☕
                 </motion.span>
-                <span className="text-base font-bold hover:cursor-pointer">Buy Me a Coffee</span>
+                <span className="text-base font-bold">Buy Me a Coffee</span>
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             </motion.button>

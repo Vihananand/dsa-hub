@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { QuestionCard } from "../components/card";
+import { BuyMeCoffeeModal } from "../components/BuyMeCoffeeModal";
 
 export default function Home() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCoffeeModal, setShowCoffeeModal] = useState(false);
   const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 500], [0, 150]);
 
@@ -113,6 +115,33 @@ export default function Home() {
                 </Link>
               </button>
             </motion.div>
+          </motion.div>
+
+          {/* Buy Me a Coffee Button */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.9, duration: 0.6 }}
+            className="mb-16 flex justify-center"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowCoffeeModal(true)}
+              className="group relative overflow-hidden rounded-full bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20 p-1 shadow-2xl hover:shadow-yellow-500/20 transition-all duration-300"
+            >
+              <div className="relative flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-gray-900 to-black px-8 py-4 text-white transition-all duration-300 group-hover:from-yellow-900/20 group-hover:to-orange-900/20">
+                <motion.span 
+                  className="text-2xl"
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  ☕
+                </motion.span>
+                <span className="text-base font-bold">Buy Me a Coffee</span>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            </motion.button>
           </motion.div>
         </div>
 
@@ -221,6 +250,12 @@ export default function Home() {
           </svg>
         </motion.div>
       </div>
+
+      {/* Buy Me a Coffee Modal */}
+      <BuyMeCoffeeModal 
+        isOpen={showCoffeeModal} 
+        onClose={() => setShowCoffeeModal(false)} 
+      />
     </main>
   );
 }

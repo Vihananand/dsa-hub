@@ -53,11 +53,12 @@ export default function AdminDashboardClient({ initialQuestions }) {
   const [formData, setFormData] = useState({ serial: "", title: "", questionlink: "", topic: "", difficulty: "Easy" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [isAuth, setIsAuth] = useState(true); // Since we'll handle this in server component
+  const [isAuth, setIsAuth] = useState(null); // null = checking, true = authenticated, false = not authenticated
   const [confirmModal, setConfirmModal] = useState({ show: false, item: null });
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "" });
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   
   // Add refs for auto-scroll functionality  
   const formRef = useRef(null);
@@ -212,10 +213,16 @@ export default function AdminDashboardClient({ initialQuestions }) {
         method: "POST", 
         credentials: "include" 
       });
+      setShowLogoutModal(false);
       router.push("/admin");
     } catch (error) {
+      setShowLogoutModal(false);
       router.push("/admin");
     }
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutModal(true);
   };
 
   const validateForm = (data) => {
@@ -268,12 +275,23 @@ export default function AdminDashboardClient({ initialQuestions }) {
     q.difficulty.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (!isAuth) {
+  if (isAuth === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-black flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">🔒</div>
           <p className="text-white text-lg">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuth === false) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">🚫</div>
+          <p className="text-white text-lg">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -300,13 +318,13 @@ export default function AdminDashboardClient({ initialQuestions }) {
               </span>
               <button
                 onClick={() => setShowPasswordModal(true)}
-                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors hover:cursor-pointer"
               >
                 Change Password
               </button>
               <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+                onClick={confirmLogout}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors hover:cursor-pointer"
               >
                 Logout
               </button>
@@ -332,7 +350,7 @@ export default function AdminDashboardClient({ initialQuestions }) {
               setShowForm(true);
               setTimeout(scrollToForm, 100);
             }}
-            className="w-full sm:w-auto px-6 py-2 bg-[#E7A41F] hover:bg-[#d49419] text-white rounded-lg font-medium shadow-lg transition-all duration-200"
+            className="w-full sm:w-auto px-6 py-2 bg-[#E7A41F] hover:bg-[#d49419] text-white rounded-lg font-medium shadow-lg transition-all duration-200 hover:cursor-pointer"
           >
             <span className="flex items-center gap-2">
               <span>➕</span>
@@ -512,7 +530,7 @@ export default function AdminDashboardClient({ initialQuestions }) {
                       className="hover:bg-gray-800/30 transition-colors"
                     >
                       <td className="px-4 py-3 text-sm text-gray-300">
-                        #{question.serial}
+                        {question.serial}
                       </td>
                       <td className="px-4 py-3">
                         <div className="text-sm font-medium text-white">
@@ -590,6 +608,49 @@ export default function AdminDashboardClient({ initialQuestions }) {
       </div>
 
       {/* Modals */}
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="glass glow-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white">Confirm Logout</h2>
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-300">
+                Are you sure you want to logout? You will need to login again to access the admin dashboard.
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {/* Change Password Modal */}
       {showPasswordModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

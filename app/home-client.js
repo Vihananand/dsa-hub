@@ -81,7 +81,7 @@ export default function HomeClient({ questions, totalCount, error }) {
           className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
         >
           <div className="glass glow-border rounded-2xl p-8 text-center shadow-2xl">
-            <div className="text-4xl font-bold text-white mb-2">{totalCount || 0}+</div>
+            <div className="text-4xl font-bold text-white mb-2">{totalCount || 0}</div>
             <div className="text-gray-400">Total Problems</div>
           </div>
           <div className="glass glow-border rounded-2xl p-8 text-center shadow-2xl">

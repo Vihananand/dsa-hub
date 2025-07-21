@@ -50,7 +50,7 @@ export default function AdminDashboardClient({ initialQuestions }) {
   const [search, setSearch] = useState("");
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ serial: "", title: "", questionlink: "", topic: "", difficulty: "Easy" });
+  const [formData, setFormData] = useState({ serial: "", title: "", questionlink: "", solutionlink: "", topic: "", difficulty: "Easy" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(null); // null = checking, true = authenticated, false = not authenticated
@@ -119,7 +119,7 @@ export default function AdminDashboardClient({ initialQuestions }) {
 
       const newQuestion = await response.json();
       setQuestions(prev => [...prev, newQuestion]);
-      setFormData({ serial: "", title: "", questionlink: "", topic: "", difficulty: "Easy" });
+      setFormData({ serial: "", title: "", questionlink: "", solutionlink: "", topic: "", difficulty: "Easy" });
       setShowForm(false);
       setNotification({ show: true, message: "Question added successfully!", type: "success" });
     } catch (error) {
@@ -147,7 +147,7 @@ export default function AdminDashboardClient({ initialQuestions }) {
       const updatedQuestion = await response.json();
       setQuestions(prev => prev.map(q => q.serial === serial ? updatedQuestion : q));
       setEditingItem(null);
-      setFormData({ serial: "", title: "", questionlink: "", topic: "", difficulty: "Easy" });
+      setFormData({ serial: "", title: "", questionlink: "", solutionlink: "", topic: "", difficulty: "Easy" });
       setShowForm(false);
       setNotification({ show: true, message: "Question updated successfully!", type: "success" });
     } catch (error) {
@@ -254,6 +254,7 @@ export default function AdminDashboardClient({ initialQuestions }) {
       serial: question.serial,
       title: question.title,
       questionlink: question.questionlink,
+      solutionlink: question.solutionlink || "",
       topic: question.topic,
       difficulty: question.difficulty
     });
@@ -264,15 +265,22 @@ export default function AdminDashboardClient({ initialQuestions }) {
 
   const cancelEdit = () => {
     setEditingItem(null);
-    setFormData({ serial: "", title: "", questionlink: "", topic: "", difficulty: "Easy" });
+    setFormData({ serial: "", title: "", questionlink: "", solutionlink: "", topic: "", difficulty: "Easy" });
     setShowForm(false);
     setErrors({});
   };
 
+  // Function to get the next available serial number
+  const getNextSerialNumber = () => {
+    if (questions.length === 0) return 1;
+    const maxSerial = Math.max(...questions.map(q => parseInt(q.serial) || 0));
+    return maxSerial + 1;
+  };
+
   const filteredQuestions = questions.filter(q =>
-    q.title.toLowerCase().includes(search.toLowerCase()) ||
-    q.topic.toLowerCase().includes(search.toLowerCase()) ||
-    q.difficulty.toLowerCase().includes(search.toLowerCase())
+    (q.title || '').toLowerCase().includes(search.toLowerCase()) ||
+    (q.topic || '').toLowerCase().includes(search.toLowerCase()) ||
+    (q.difficulty || '').toLowerCase().includes(search.toLowerCase())
   );
 
   if (isAuth === null) {
@@ -347,6 +355,8 @@ export default function AdminDashboardClient({ initialQuestions }) {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => {
+              const nextSerial = getNextSerialNumber();
+              setFormData({ serial: nextSerial.toString(), title: "", questionlink: "", solutionlink: "", topic: "", difficulty: "Easy" });
               setShowForm(true);
               setTimeout(scrollToForm, 100);
             }}
@@ -383,17 +393,17 @@ export default function AdminDashboardClient({ initialQuestions }) {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Serial Number *
+                  Serial Number * {!editingItem && <span className="text-xs text-green-400">(auto-generated)</span>}
                 </label>
                 <input
                   type="number"
                   value={formData.serial}
                   onChange={(e) => setFormData(prev => ({ ...prev, serial: e.target.value }))}
-                  disabled={!!editingItem}
+                  disabled={!editingItem}
                   className={`w-full px-3 py-2 bg-gray-800 border rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     errors.serial ? 'border-red-500' : 'border-gray-600'
-                  } ${editingItem ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  placeholder="Enter serial number"
+                  } ${!editingItem ? 'opacity-75 cursor-not-allowed' : ''}`}
+                  placeholder={editingItem ? "Enter serial number" : "Auto-generated serial number"}
                 />
                 {errors.serial && <p className="text-red-400 text-sm mt-1">{errors.serial}</p>}
               </div>
@@ -446,6 +456,19 @@ export default function AdminDashboardClient({ initialQuestions }) {
                   placeholder="Enter question URL"
                 />
                 {errors.questionlink && <p className="text-red-400 text-sm mt-1">{errors.questionlink}</p>}
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Solution Link <span className="text-xs text-gray-400">(optional)</span>
+                </label>
+                <input
+                  type="url"
+                  value={formData.solutionlink}
+                  onChange={(e) => setFormData(prev => ({ ...prev, solutionlink: e.target.value }))}
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter solution URL (optional)"
+                />
               </div>
 
               <div className="md:col-span-2">
@@ -544,6 +567,16 @@ export default function AdminDashboardClient({ initialQuestions }) {
                         >
                           {question.questionlink}
                         </a>
+                        {question.solutionlink && (
+                          <a
+                            href={question.solutionlink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-green-400 hover:text-green-300 transition-colors truncate block max-w-xs mt-1"
+                          >
+                            🔗 Solution: {question.solutionlink}
+                          </a>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         {PlatformLogo ? (

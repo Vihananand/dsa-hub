@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { SearchInput } from "../../../components/ui";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -9,8 +9,9 @@ export default function AdminDashboard() {
   const [auth, setAuth] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [search, setSearch] = useState("");
-  const [form, setForm] = useState({ serial: "", title: "", difficulty: "", topic: "", questionlink: "", solutionlink: "" });
+  const [form, setForm] = useState({ serial: "1", title: "", difficulty: "", topic: "", questionlink: "", solutionlink: "" });
   const [editId, setEditId] = useState(null);
+  const [nextSerial, setNextSerial] = useState("1");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -21,30 +22,7 @@ export default function AdminDashboard() {
   const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("[DASHBOARD] Checking authentication...");
-    fetch("/api/admin/me", {
-      credentials: "include"
-    })
-      .then(async (res) => {
-        console.log("[DASHBOARD] Auth check status:", res.status);
-        if (!res.ok) {
-          console.log("[DASHBOARD] Not authenticated, redirecting to login");
-          router.replace("/admin");
-        } else {
-          const authData = await res.json();
-          console.log("[DASHBOARD] Authenticated as:", authData);
-          setAuth(authData);
-          fetchQuestions();
-        }
-      })
-      .catch((error) => {
-        console.error("[DASHBOARD] Auth check failed:", error);
-        router.replace("/admin");
-      });
-  }, [router]);
-
-  function fetchQuestions() {
+  const fetchQuestions = useCallback(() => {
     setLoading(true);
     fetch("/api/questions", {
       credentials: "include"
@@ -75,6 +53,19 @@ export default function AdminDashboard() {
         
         console.log("[DASHBOARD] Valid questions after filtering:", validQuestions);
         setQuestions(validQuestions);
+        
+        // Calculate next serial number
+        const maxSerial = validQuestions.length > 0 
+          ? Math.max(...validQuestions.map(q => parseInt(q.serial) || 0))
+          : 0;
+        const nextSerialNumber = maxSerial + 1;
+        setNextSerial(nextSerialNumber.toString());
+        
+        // Set next serial in form if not editing
+        if (!editId) {
+          setForm(prevForm => ({ ...prevForm, serial: nextSerialNumber.toString() }));
+        }
+        
         setLoading(false);
       })
       .catch(error => {
@@ -88,7 +79,30 @@ export default function AdminDashboard() {
           type: "danger"
         });
       });
-  }
+  }, [editId]);
+
+  useEffect(() => {
+    console.log("[DASHBOARD] Checking authentication...");
+    fetch("/api/admin/me", {
+      credentials: "include"
+    })
+      .then(async (res) => {
+        console.log("[DASHBOARD] Auth check status:", res.status);
+        if (!res.ok) {
+          console.log("[DASHBOARD] Not authenticated, redirecting to login");
+          router.replace("/admin");
+        } else {
+          const authData = await res.json();
+          console.log("[DASHBOARD] Authenticated as:", authData);
+          setAuth(authData);
+          fetchQuestions();
+        }
+      })
+      .catch((error) => {
+        console.error("[DASHBOARD] Auth check failed:", error);
+        router.replace("/admin");
+      });
+  }, [router, fetchQuestions]);
 
   function handleChange(e) {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -136,7 +150,7 @@ export default function AdminDashboard() {
         });
       }
 
-      setForm({ serial: "", title: "", difficulty: "", topic: "", questionlink: "", solutionlink: "" });
+      setForm({ serial: nextSerial || "1", title: "", difficulty: "", topic: "", questionlink: "", solutionlink: "" });
       setEditId(null);
       
       // Refresh questions list to ensure data consistency
@@ -320,16 +334,19 @@ export default function AdminDashboard() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Serial Number</label>
+                  <label className="block text-gray-300 text-sm font-medium mb-2">
+                    Serial Number {!editId && "(Auto-generated)"}
+                  </label>
                   <input
                     name="serial"
                     type="number"
-                    placeholder="Enter serial number"
-                    className="w-full px-4 py-3 rounded-lg glass-dark border border-gray-600/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition-all duration-300"
+                    placeholder={!editId ? `Next: ${nextSerial}` : "Enter serial number"}
+                    className={`w-full px-4 py-3 rounded-lg glass-dark border border-gray-600/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition-all duration-300 ${!editId ? 'bg-gray-800/50 cursor-not-allowed' : ''}`}
                     value={form.serial}
                     onChange={handleChange}
                     required
                     min="1"
+                    readOnly={!editId}
                   />
                 </div>
 
@@ -425,7 +442,7 @@ export default function AdminDashboard() {
                     type="button"
                     onClick={() => {
                       setEditId(null);
-                      setForm({ serial: "", title: "", difficulty: "", topic: "", questionlink: "", solutionlink: "" });
+                      setForm({ serial: nextSerial || "1", title: "", difficulty: "", topic: "", questionlink: "", solutionlink: "" });
                     }}
                     className="px-6 py-3 rounded-lg bg-gray-700/50 text-gray-300 font-medium hover:bg-gray-700/70 border border-gray-600/50 hover:border-gray-500/50 transition-all duration-300 cursor-pointer"
                   >

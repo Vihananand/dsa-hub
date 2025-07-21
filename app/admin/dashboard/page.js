@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { SearchInput } from "../../../components/ui";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ConfirmModal, NotificationModal } from "../../../components/modal";
@@ -7,6 +8,7 @@ import { ConfirmModal, NotificationModal } from "../../../components/modal";
 export default function AdminDashboard() {
   const [auth, setAuth] = useState(null);
   const [questions, setQuestions] = useState([]);
+  const [search, setSearch] = useState("");
   const [form, setForm] = useState({ serial: "", title: "", difficulty: "", topic: "", questionlink: "", solutionlink: "" });
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState("");
@@ -441,10 +443,18 @@ export default function AdminDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
         >
-          <div className="glass glow-border rounded-2xl p-8 shadow-2xl">
-            <h2 className="text-2xl font-bold text-white mb-6">Questions ({questions.length})</h2>
-            
-            {loading ? (
+              <div className="glass glow-border rounded-2xl p-8 shadow-2xl">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                  <h2 className="text-2xl font-bold text-white">Questions ({questions.length})</h2>
+                  <div className="w-full sm:w-80">
+                    <SearchInput
+                      value={search}
+                      onChange={setSearch}
+                      placeholder="Search by title, topic, or serial..."
+                    />
+                  </div>
+                </div>
+                {loading ? (
               <div className="text-center py-8">
                 <div className="inline-block h-6 w-6 animate-spin rounded-full border-b-2 border-white"></div>
                 <p className="mt-2 text-gray-400">Loading questions...</p>
@@ -455,14 +465,17 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {questions.map((q) => {
-                  // Defensive check - skip if question is invalid
-                  if (!q || !q.title || !q.serial) {
-                    console.warn("[DASHBOARD] Skipping invalid question:", q);
-                    return null;
-                  }
-                  
-                  return (
+                {questions
+                  .filter(q => {
+                    if (!q || !q.title || !q.serial) return false;
+                    const searchLower = search.toLowerCase();
+                    return (
+                      q.title.toLowerCase().includes(searchLower) ||
+                      (q.topic && q.topic.toLowerCase().includes(searchLower)) ||
+                      q.serial.toString().includes(searchLower)
+                    );
+                  })
+                  .map((q) => (
                     <div key={q.serial} className="glass-dark rounded-lg p-4 border border-gray-600/30">
                       <div className="flex flex-col space-y-3">
                         {/* Header with serial and title */}
@@ -472,7 +485,6 @@ export default function AdminDashboard() {
                           </span>
                           <h3 className="text-white font-medium leading-tight flex-1">{q.title}</h3>
                         </div>
-                        
                         {/* Difficulty and topic */}
                         <div className="flex items-center gap-3 text-sm">
                           <span className={`px-2 py-1 rounded text-xs font-medium ${
@@ -484,7 +496,6 @@ export default function AdminDashboard() {
                           </span>
                           <span className="text-gray-400 text-xs">{q.topic || 'General'}</span>
                         </div>
-                        
                         {/* Action buttons */}
                         <div className="flex items-center gap-2 pt-2">
                           <a
@@ -520,8 +531,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  ))}
               </div>
             )}
           </div>

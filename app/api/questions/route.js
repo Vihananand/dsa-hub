@@ -50,11 +50,11 @@ export async function POST(req) {
     }
     
     const result = await pool.query(
-      "INSERT INTO leetcodelinks (serial, title, difficulty, topic, questionlink, solutionlink) VALUES ($1, $2, $3, $4, $5, $6) RETURNING serial",
+      "INSERT INTO leetcodelinks (serial, title, difficulty, topic, questionlink, solutionlink) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [serial, title, difficulty, topic, questionlink, solutionlink || null]
     );
     
-    return Response.json({ success: true, serial: result.rows[0]?.serial });
+    return Response.json(result.rows[0]);
   } catch (e) {
     console.error("[QUESTIONS API] Detailed error:", {
       message: e.message,
@@ -72,11 +72,11 @@ export async function PUT(req) {
   const { serial, title, difficulty, topic, questionlink, solutionlink } = await req.json();
   if (!serial) return Response.json({ error: "Missing serial" }, { status: 400 });
   try {
-    await pool.query(
-      "UPDATE leetcodelinks SET title=$1, difficulty=$2, topic=$3, questionlink=$4, solutionlink=$5 WHERE serial=$6",
+    const result = await pool.query(
+      "UPDATE leetcodelinks SET title=$1, difficulty=$2, topic=$3, questionlink=$4, solutionlink=$5 WHERE serial=$6 RETURNING *",
       [title, difficulty, topic, questionlink, solutionlink, serial]
     );
-    return Response.json({ success: true });
+    return Response.json(result.rows[0]);
   } catch (e) {
     console.error("[QUESTIONS API] Error updating question:", e);
     return Response.json({ error: "Failed to update question" }, { status: 500 });

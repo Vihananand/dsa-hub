@@ -21,8 +21,19 @@ function authenticate() {
 
 export async function GET(req) {
   try {
-    // Test database connection
-    const { rows } = await pool.query("SELECT * FROM leetcodelinks ORDER BY serial ASC");
+    // Get only complete questions
+    const { rows } = await pool.query(`
+      SELECT * FROM leetcodelinks 
+      WHERE title IS NOT NULL 
+        AND title != '' 
+        AND difficulty IS NOT NULL 
+        AND difficulty != '' 
+        AND topic IS NOT NULL 
+        AND topic != '' 
+        AND questionlink IS NOT NULL 
+        AND questionlink != ''
+      ORDER BY serial ASC
+    `);
     return Response.json(rows);
   } catch (e) {
     console.error("[QUESTIONS API] Database connection error:", {

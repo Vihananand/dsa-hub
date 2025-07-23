@@ -14,12 +14,6 @@ export default function QuestionsClient({ questions: allQuestions, error: initia
   // Calculate difficulty counts
   const getFilteredQuestions = useCallback(() => {
     return allQuestions.filter((q) => {
-      // Ensure question has required properties
-      if (!q || !q.title || !q.topic || !q.difficulty) {
-        console.warn('Question with missing data found:', q);
-        return false;
-      }
-      
       const matchesSearch = !search || 
         q.title.toLowerCase().includes(search.toLowerCase()) ||
         q.topic.toLowerCase().includes(search.toLowerCase());

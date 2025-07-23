@@ -19,7 +19,7 @@ export function Dropdown({ options, value, onChange, placeholder, icon, classNam
   const displayValue = value ? options.find(opt => opt.value === value)?.label : placeholder;
 
   return (
-    <div ref={dropdownRef} className={`relative ${className}`}>
+    <div ref={dropdownRef} className={`relative ${className}`} style={{ isolation: 'isolate' }}>
       <motion.button
         whileTap={{ scale: 0.98 }}
         type="button"
@@ -51,21 +51,23 @@ export function Dropdown({ options, value, onChange, placeholder, icon, classNam
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-gray-900/95 backdrop-blur-md border border-gray-600/50 rounded-xl shadow-2xl z-[9999] max-h-60 overflow-y-auto"
-            style={{ zIndex: 9999 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-gray-900/95 backdrop-blur-md border border-gray-600/50 rounded-xl shadow-2xl max-h-60 overflow-y-auto"
+            style={{ zIndex: 999999999 }}
           >
             {options.map((option, index) => (
               <motion.button
-                key={option.value}
+                key={option?.value || index}
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   onChange(option.value);
                   setIsOpen(false);
                 }}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.03, duration: 0.15 }}
-                className={`w-full px-4 py-3 text-left hover:bg-white/15 transition-colors duration-150 font-medium first:rounded-t-xl last:rounded-b-xl cursor-pointer ${
+                className={`w-full px-4 py-3 text-left hover:bg-white/15 transition-colors duration-150 font-medium first:rounded-t-xl last:rounded-b-xl cursor-pointer block ${
                   value === option.value
                     ? 'bg-white/15 text-white'
                     : 'text-gray-300 hover:text-white'

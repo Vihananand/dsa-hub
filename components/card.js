@@ -46,6 +46,7 @@ export function Card({ children, className = "", hover = true, ...props }) {
       whileHover={hover ? { scale: 1.02, y: -4 } : {}}
       transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
       className={`glass glow-border rounded-2xl shadow-2xl transition-all duration-300 ${className}`}
+      style={{ transform: 'translateZ(0)', zIndex: 1 }}
       {...props}
     >
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -75,6 +76,7 @@ export function QuestionCard({ question, index = 0, showProgress = false, progre
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.4, delay: index * 0.1, type: "spring", bounce: 0.3 }}
       className="group"
+      style={{ transform: 'translateZ(0)', zIndex: 1 }}
     >
       <Card className="p-6 h-full">
         {/* Header */}

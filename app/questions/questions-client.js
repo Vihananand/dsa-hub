@@ -42,14 +42,32 @@ export default function QuestionsClient({ questions: allQuestions, error: initia
   const getTopics = useCallback(() => {
     const topicSet = new Set();
     allQuestions.forEach(q => {
-      const topics = q.topic.split(',').map(t => t.trim());
-      topics.forEach(topic => topicSet.add(topic));
+      if (q.topic) {
+        const topics = q.topic.split(',').map(t => t.trim()).filter(t => t.length > 0);
+        topics.forEach(topic => topicSet.add(topic));
+      }
     });
     return Array.from(topicSet).sort();
   }, [allQuestions]);
 
   const availableTopics = getTopics();
-  const difficulties = ['Easy', 'Medium', 'Hard'];
+  
+  const getDifficulties = useCallback(() => {
+    const difficultySet = new Set();
+    allQuestions.forEach(q => {
+      if (q.difficulty) {
+        difficultySet.add(q.difficulty);
+      }
+    });
+    return Array.from(difficultySet).sort();
+  }, [allQuestions]);
+
+  const difficulties = getDifficulties();
+
+  // Debug logging
+  console.log('Available topics:', availableTopics);
+  console.log('Available difficulties:', difficulties);
+  console.log('Total questions:', allQuestions.length);
 
   if (initialError) {
     return (
@@ -152,30 +170,37 @@ export default function QuestionsClient({ questions: allQuestions, error: initia
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mb-12"
+          className="mb-12 relative z-50"
+          style={{ zIndex: 1000 }}
         >
-          <div className="glass glow-border rounded-2xl p-8">
+          <div className="glass glow-border rounded-2xl p-8 relative">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
+              <div className="relative z-50">
                 <SearchInput
                   value={search}
                   onChange={setSearch}
                   placeholder="Search questions or topics..."
                 />
               </div>
-              <div>
+              <div className="relative z-50">
                 <Dropdown
                   value={filter.topic}
                   onChange={(value) => setFilter(prev => ({ ...prev, topic: value }))}
-                  options={['All Topics', ...availableTopics]}
+                  options={[
+                    { value: '', label: 'All Topics' },
+                    ...availableTopics.map(topic => ({ value: topic, label: topic }))
+                  ]}
                   placeholder="Filter by Topic"
                 />
               </div>
-              <div>
+              <div className="relative z-50">
                 <Dropdown
                   value={filter.difficulty}
                   onChange={(value) => setFilter(prev => ({ ...prev, difficulty: value }))}
-                  options={['All Difficulties', ...difficulties]}
+                  options={[
+                    { value: '', label: 'All Difficulties' },
+                    ...difficulties.map(diff => ({ value: diff, label: diff }))
+                  ]}
                   placeholder="Filter by Difficulty"
                 />
               </div>
@@ -233,7 +258,7 @@ export default function QuestionsClient({ questions: allQuestions, error: initia
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10"
             >
               {filteredQuestions.map((question, index) => (
                 <QuestionCard

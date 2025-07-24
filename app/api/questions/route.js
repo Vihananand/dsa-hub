@@ -34,7 +34,14 @@ export async function GET(req) {
         AND questionlink != ''
       ORDER BY serial ASC
     `);
-    return Response.json(rows);
+    
+    const response = Response.json(rows);
+    // Add cache control headers to ensure fresh data
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    
+    return response;
   } catch (e) {
     console.error("[QUESTIONS API] Database connection error:", {
       message: e.message,

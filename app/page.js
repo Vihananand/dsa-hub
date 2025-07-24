@@ -1,6 +1,10 @@
 import { getLatestQuestions, getTotalQuestionCount } from "../lib/questions";
 import HomeClient from "./home-client";
 
+// Force dynamic rendering and disable caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function Home() {
   let questions = [];
   let totalCount = 0;

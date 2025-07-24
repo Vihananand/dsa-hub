@@ -1,6 +1,10 @@
 import { getQuestions } from "../../lib/questions";
 import ProgressClient from "./progress-client";
 
+// Force dynamic rendering and disable caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function ProgressPage() {
   let questions = [];
   let error = null;
